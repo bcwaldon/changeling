@@ -1,0 +1,8 @@
+project_config:
+  name: changeling
+  image: 'Ubuntu 12.04'
+  remote_user: ubuntu
+  flavor_name: n1.medium
+  sec_groups:
+    - tcp, 22, 22, 0.0.0.0/0
+    - tcp, 80, 80, 0.0.0.0/0
