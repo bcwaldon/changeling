@@ -4,7 +4,7 @@ import yaml
 
 
 DEFAULTS = {
-    's3.bucket': '3ac5d7b9-c711-4307-bc06-7668b3c26efd:changeling',
+    's3.bucket': '3ac5d7b9-c711-4307-bc06-7668b3c26efd-changeling',
 }
 
 
