@@ -14,15 +14,17 @@ class Change(object):
             'name': {'type': 'string'},
             'description': {'type': 'string'},
             'tags': {'type': 'array'},
+            'wip': {'type': 'boolean'},
         },
         'additionalProperties': False,
     }
 
-    def __init__(self, id=None, name=None, description=None, tags=None):
-        self.id = id or str(uuid.uuid4())
-        self.name = name
-        self.description = description
-        self.tags = tags or []
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('id', str(uuid.uuid4()))
+        self.name = kwargs.get('name')
+        self.description = kwargs.get('description')
+        self.tags = kwargs.get('tags', [])
+        self.wip = kwargs.get('wip', False)
 
     @classmethod
     def from_dict(self, data):
