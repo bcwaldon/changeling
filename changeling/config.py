@@ -4,6 +4,8 @@ import yaml
 
 
 DEFAULTS = {
+    'server.host': '127.0.0.1',
+    'server.port': 8080,
     's3.bucket': '3ac5d7b9-c711-4307-bc06-7668b3c26efd-changeling',
 }
 
