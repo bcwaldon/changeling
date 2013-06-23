@@ -3,8 +3,13 @@ project_config:
   image: 'Ubuntu 12.04'
   remote_user: ubuntu
   flavor_name: n1.medium
+  files:
+    changeling.yaml: ~/
+    changeling-supervisor.conf: ~/
+    changeling-gunicorn.conf.py: ~/
   provision_scripts:
     - cloudenvy-provision.bash
   sec_groups:
+    - tcp, -1, -1, 0.0.0.0/0
     - tcp, 22, 22, 0.0.0.0/0
     - tcp, 80, 80, 0.0.0.0/0

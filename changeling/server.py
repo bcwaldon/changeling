@@ -8,13 +8,23 @@ import changeling.storage
 import changeling.views
 
 
-APP = flask.Flask('changeling')
-
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--config-file', default='changeling.yaml')
 parser.add_argument('--debug', action='store_true', default=False)
 parser.add_argument('--host', default=None)
 parser.add_argument('--port', default=None, type=int)
+
+
+def run_gunicorn(config_file):
+    app = flask.Flask('changeling')
+
+    config = changeling.config.load(config_file)
+    storage = changeling.storage.Storage(config)
+    api = changeling.api.ChangeAPI(storage)
+
+    changeling.views.register(app, api)
+
+    return app
 
 
 def run():
