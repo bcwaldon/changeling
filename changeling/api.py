@@ -7,7 +7,12 @@ class ChangeAPI(object):
 
     def list(self):
         for change_data in self.storage.list_changes():
-            yield changeling.models.Change.from_dict(change_data)
+            try:
+                yield changeling.models.Change.from_dict(change_data)
+            except changeling.exception.ValidationError:
+                #TODO(bcwaldon): Log the offending object so it can
+                # be removed from the datastore
+                continue
 
     def get(self, change_id):
         change_data = self.storage.get_change(change_id)
