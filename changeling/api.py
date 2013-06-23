@@ -13,8 +13,17 @@ class ChangeAPI(object):
         change_data = self.storage.get_change(change_id)
         return changeling.models.Change.from_dict(change_data)
 
+    def new(self, data):
+        change = changeling.models.Change.from_dict(data)
+        self.save(change)
+        return change
+
     def save(self, change):
         self.storage.save_change(change.to_dict())
 
     def delete(self, change):
         self.storage.delete_change(change.id)
+
+    @staticmethod
+    def schema():
+        return changeling.models.Change.schema
