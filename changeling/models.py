@@ -15,6 +15,7 @@ class Change(object):
             'description': {'type': 'string'},
             'tags': {'type': 'array'},
             'wip': {'type': 'boolean'},
+            'approved': {'type': 'boolean'},
         },
         'additionalProperties': False,
     }
@@ -25,6 +26,7 @@ class Change(object):
         self.description = kwargs.get('description')
         self.tags = kwargs.get('tags', [])
         self.wip = kwargs.get('wip', False)
+        self.approved = kwargs.get('approved', False)
 
     @classmethod
     def from_dict(self, data):
