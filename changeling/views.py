@@ -3,6 +3,7 @@ import json
 import flask
 from flask import request
 import jsonpatch
+import jsonpointer
 
 import changeling.exception
 import changeling.models
@@ -88,6 +89,9 @@ def register(app, api):
             document = patch.apply(document)
         except jsonpatch.JsonPatchException as exc:
             msg = 'JSON Patch document error: %s' % exc
+            return build_error_response(400, msg)
+        except jsonpointer.JsonPointerException as exc:
+            msg = 'JSON Pointer error: %s' % exc
             return build_error_response(400, msg)
 
         try:
