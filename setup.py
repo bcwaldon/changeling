@@ -11,4 +11,9 @@ setuptools.setup(
     version=changeling.metadata.VERSION,
     packages=['changeling'],
     install_requires=parse_requirements(),
+    entry_points={
+        'console_scripts': [
+            'changeling-server = changeling.server:run',
+        ],
+    },
 )
