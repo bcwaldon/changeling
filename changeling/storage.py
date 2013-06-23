@@ -52,7 +52,6 @@ class S3Storage(object):
 
 
 def StorageFactory(config):
-    print config['s3.bucket']
     obj = S3Storage(config['s3.access_key'],
                     config['s3.secret_key'],
                     config['s3.bucket'])
