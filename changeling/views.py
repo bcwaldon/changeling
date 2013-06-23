@@ -68,7 +68,6 @@ def register(app, api):
         else:
             return build_response(201, change.to_dict())
 
-
     @app.route('/changes/<change_id>', methods=['PATCH'])
     def patch_change(change_id):
         try:
