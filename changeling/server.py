@@ -19,7 +19,7 @@ def run_gunicorn(config_file):
     app = flask.Flask('changeling')
 
     config = changeling.config.load(config_file)
-    storage = changeling.storage.Storage(config)
+    storage = changeling.storage.StorageFactory(config)
     api = changeling.api.ChangeAPI(storage)
 
     changeling.views.register(app, api)
@@ -31,7 +31,7 @@ def run():
     args = parser.parse_args()
 
     config = changeling.config.load(args.config_file)
-    storage = changeling.storage.Storage(config)
+    storage = changeling.storage.StorageFactory(config)
     api = changeling.api.ChangeAPI(storage)
 
     app = flask.Flask('changeling')
