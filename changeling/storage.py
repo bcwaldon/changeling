@@ -45,7 +45,10 @@ class S3Storage(object):
 
     def delete_change(self, change_id):
         key = self.bucket.get_key(change_id)
-        key.delete()
+        try:
+            key.delete()
+        except AttributeError:
+            raise changeling.exception.ChangeNotFound(change_id)
 
 
 def StorageFactory(config):
