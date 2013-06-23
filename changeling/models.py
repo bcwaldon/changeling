@@ -12,13 +12,15 @@ class Change(object):
         'properties': {
             'id': {'type': 'string'},
             'name': {'type': 'string'},
+            'description': {'type': 'string'},
         },
         'additionalProperties': False,
     }
 
-    def __init__(self, id=None, name=None):
+    def __init__(self, id=None, name=None, description=None):
         self.id = id or str(uuid.uuid4())
         self.name = name
+        self.description = description
 
     @classmethod
     def from_dict(self, data):
