@@ -1,5 +1,4 @@
 import json
-import uuid
 
 import boto.s3.connection
 
@@ -31,5 +30,5 @@ class Storage(object):
             yield json.loads(obj.get_contents_as_string())
 
     def save_change(self, change_data):
-        key = self.bucket.new_key(uuid.uuid4())
+        key = self.bucket.new_key(change_data['id'])
         key.set_contents_from_string(json.dumps(change_data))
