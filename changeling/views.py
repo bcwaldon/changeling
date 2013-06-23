@@ -2,6 +2,7 @@ import json
 
 import flask
 from flask import request
+import jsonpatch
 
 import changeling.exception
 import changeling.models
@@ -65,6 +66,37 @@ def register(app, api):
             return build_error_response(400, 'Invalid change entity')
         else:
             return build_response(201, change.to_dict())
+
+
+    @app.route('/changes/<change_id>', methods=['PATCH'])
+    def patch_change(change_id):
+        try:
+            data = parse_json_request()
+        except ValueError as exc:
+            return build_error_response(400, str(exc))
+
+        patch = jsonpatch.JsonPatch(data)
+
+        try:
+            change = api.get(change_id)
+        except changeling.exception.ChangeNotFound:
+            return build_response(404)
+
+        document = change.to_dict()
+
+        try:
+            document = patch.apply(document)
+        except jsonpatch.JsonPatchException as exc:
+            msg = 'JSON Patch document error: %s' % exc
+            return build_error_response(400, msg)
+
+        try:
+            change = api.new(document)
+        except changeling.exception.ValidationError:
+            msg = 'Application of JSON Patch results in an invalid entity'
+            return build_error_response(400, msg)
+
+        return build_response(200, change.to_dict())
 
     @app.route('/changes/<change_id>', methods=['GET'])
     def show_change(change_id):

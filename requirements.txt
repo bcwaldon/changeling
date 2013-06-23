@@ -1,4 +1,5 @@
 boto
 flask
+jsonpatch
 jsonschema
 pyyaml
