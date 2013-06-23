@@ -25,16 +25,59 @@ class TestChangeModelValidation(unittest.TestCase):
         self.assertRaises(changeling.exception.ValidationError,
                           changeling.models.Change.from_dict, data)
 
-    def test_full_representation(self):
+    def test_full_model(self):
         data = {
             'id': '323096f8-d02a-427e-a25a-8f70df27d78b',
             'name': 'foo',
             'description': 'bar',
             'tags': ['ping', 'pong'],
             'wip': True,
+            'approved': True,
+        }
+        change = changeling.models.Change.from_dict(data)
+
+        for key, value in data.items():
+            self.assertEqual(value, change[key])
+
+    def test_full_model_to_dict(self):
+        data = {
+            'id': '323096f8-d02a-427e-a25a-8f70df27d78b',
+            'name': 'foo',
+            'description': 'bar',
+            'tags': ['ping', 'pong'],
+            'wip': True,
+            'approved': True,
+        }
+
+        result = changeling.models.Change(**data).to_dict()
+
+        self.assertEqual(data, result)
+
+    def test_minimal_model(self):
+        change = changeling.models.Change.from_dict({})
+
+        self.assertTrue(change['id'] is not None)
+        expected = {
+            'name': None,
+            'description': None,
+            'tags': [],
+            'wip': False,
             'approved': False,
         }
-        self._assert_valid(data)
+        for key, value in expected.items():
+            self.assertEqual(value, change[key])
+
+    def test_minimal_model_to_dict(self):
+        expected = {
+            'approved': False,
+            'wip': False,
+            'tags': [],
+        }
+
+        result = changeling.models.Change().to_dict()
+
+        self.assertTrue(result.pop('id') is not None)
+        self.assertEqual(expected, result)
 
     #NOTE(bcwaldon): we specifically test id since it is validated by a regex
     def test_change_id(self):

@@ -36,7 +36,7 @@ class Change(object):
         self._validate(self.attributes)
 
     def __getitem__(self, key):
-        return self.attributes[key]
+        return self.attributes.get(key)
 
     @classmethod
     def from_dict(self, data):
