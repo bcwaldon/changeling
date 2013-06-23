@@ -1,5 +1,6 @@
 import os
 
+import pytest
 import unittest
 import uuid
 
@@ -20,6 +21,7 @@ class Base(object):
 
 
 class TestStorageFactory(Base, unittest.TestCase):
+    @pytest.mark.functional
     def test_init(self):
         storage = changeling.storage.StorageFactory(self.config)
         self.assertTrue(isinstance(storage, changeling.storage.S3Storage))
@@ -30,5 +32,6 @@ class TestS3Storage(Base, unittest.TestCase):
         super(TestS3Storage, self).setUp()
         self.storage = changeling.storage.StorageFactory(self.config)
 
+    @pytest.mark.functional
     def test_01_list_empty(self):
         self.assertEqual([], list(self.storage.list_changes()))
