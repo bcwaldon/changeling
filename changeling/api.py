@@ -9,6 +9,12 @@ class ChangeAPI(object):
         for change_data in self.storage.list_changes():
             yield changeling.models.Change.from_dict(change_data)
 
+    def get(self, change_id):
+        change_data = self.storage.get_change(change_id)
+        return changeling.models.Change.from_dict(change_data)
+
     def save(self, change):
-        data = change.to_dict()
-        self.storage.save_change(data)
+        self.storage.save_change(change.to_dict())
+
+    def delete(self, change):
+        self.storage.delete_change(change.id)

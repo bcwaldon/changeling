@@ -1,0 +1,2 @@
+class ChangeNotFound(KeyError):
+    pass
