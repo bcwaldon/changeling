@@ -1,3 +1,4 @@
 changeling.yaml
 changeling.egg-info/
 .tox/
+.coverage
