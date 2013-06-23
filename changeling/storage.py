@@ -39,8 +39,8 @@ class S3Storage(object):
             raise changeling.exception.ChangeNotFound(change_id)
         return json.loads(key.get_contents_as_string())
 
-    def save_change(self, change_data):
-        key = self.bucket.new_key(change_data['id'])
+    def save_change(self, change_id, change_data):
+        key = self.bucket.new_key(change_id)
         key.set_contents_from_string(json.dumps(change_data))
 
     def delete_change(self, change_id):

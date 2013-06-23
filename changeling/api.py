@@ -24,7 +24,8 @@ class ChangeAPI(object):
         return change
 
     def save(self, change):
-        self.storage.save_change(change.to_dict())
+        data = change.to_dict()
+        self.storage.save_change(data['id'], data)
 
     def delete(self, change):
         self.storage.delete_change(change.id)
