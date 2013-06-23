@@ -13,14 +13,16 @@ class Change(object):
             'id': {'type': 'string'},
             'name': {'type': 'string'},
             'description': {'type': 'string'},
+            'tags': {'type': 'array'},
         },
         'additionalProperties': False,
     }
 
-    def __init__(self, id=None, name=None, description=None):
+    def __init__(self, id=None, name=None, description=None, tags=None):
         self.id = id or str(uuid.uuid4())
         self.name = name
         self.description = description
+        self.tags = tags or []
 
     @classmethod
     def from_dict(self, data):
