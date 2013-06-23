@@ -3,8 +3,6 @@ import uuid
 
 import boto.s3.connection
 
-import changeling.models
-
 
 class Storage(object):
     def __init__(self, config):
@@ -30,10 +28,8 @@ class Storage(object):
     def list_changes(self):
         objects = self.bucket.list()
         for obj in objects:
-            data = json.loads(obj.get_contents_as_string())
-            yield changeling.models.Change.from_dict(data)
+            yield json.loads(obj.get_contents_as_string())
 
-    def save_change(self, change):
+    def save_change(self, change_data):
         key = self.bucket.new_key(uuid.uuid4())
-        data = change.to_dict()
-        key.set_contents_from_string(json.dumps(data))
+        key.set_contents_from_string(json.dumps(change_data))
