@@ -23,13 +23,19 @@ class Change(object):
     @classmethod
     def from_dict(self, data):
         self.validate(data)
-        return Change(data.get('id'), data.get('name'))
+        return Change(**data)
 
     def to_dict(self):
-        return {'id': self.id, 'name': self.name}
+        def _generate_set_attributes():
+            for k in Change.schema['properties'].keys():
+                val = getattr(self, k)
+                if val is not None:
+                    yield (k, val)
+
+        return dict(_generate_set_attributes())
 
     def __str__(self):
-        return "<Change name='%s'>" % self.name
+        return "<Change id=%s name=%s>" % (self.id, self.name)
 
     @classmethod
     def validate(cls, data):
