@@ -9,26 +9,19 @@ class TestChangeModel(unittest.TestCase):
     def test_auto_id(self):
         data = {}
         change = changeling.models.Change(**data)
-        self.assertTrue(uuid.UUID(change.id))
+        self.assertTrue(uuid.UUID(change['id']))
 
 
 class TestChangeModelValidation(unittest.TestCase):
     def _assert_valid(self, data):
-        # Check that calling __init__ passes and returns a valid model
-        change = changeling.models.Change(**data)
-        self.assertTrue(change.is_valid())
-
-        # The fact that from_dict doesn't raise is good enough, but why not
-        # explicitly check the validity for fun
-        change = changeling.models.Change.from_dict(data)
-        self.assertTrue(change.is_valid())
+        # The lack of a raised exception signals a valid model
+        changeling.models.Change(**data)
+        changeling.models.Change.from_dict(data)
 
     def _assert_invalid(self, data):
         # Check that calling __init__ passes but returns an invalid model
-        change = changeling.models.Change(**data)
-        self.assertFalse(change.is_valid())
-
-        # from_dict classmethod will raise when invalid data is provided
+        self.assertRaises(changeling.exception.ValidationError,
+                          changeling.models.Change, **data)
         self.assertRaises(changeling.exception.ValidationError,
                           changeling.models.Change.from_dict, data)
 
@@ -38,9 +31,11 @@ class TestChangeModelValidation(unittest.TestCase):
         ]
         [self._assert_valid(d) for d in data]
 
-    def test_invalid_id(self):
         data = [
             {'id': 'foobar'},
             {'id': ''},
         ]
         [self._assert_invalid(d) for d in data]
+
+    def test_additional_properties_invalid(self):
+        self._assert_invalid({'ping': 'pong'})

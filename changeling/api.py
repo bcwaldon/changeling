@@ -28,7 +28,7 @@ class ChangeAPI(object):
         self.storage.save_change(data['id'], data)
 
     def delete(self, change):
-        self.storage.delete_change(change.id)
+        self.storage.delete_change(change['id'])
 
     @staticmethod
     def schema():
