@@ -25,7 +25,19 @@ class TestChangeModelValidation(unittest.TestCase):
         self.assertRaises(changeling.exception.ValidationError,
                           changeling.models.Change.from_dict, data)
 
-    def test_valid_id(self):
+    def test_full_representation(self):
+        data = {
+            'id': '323096f8-d02a-427e-a25a-8f70df27d78b',
+            'name': 'foo',
+            'description': 'bar',
+            'tags': ['ping', 'pong'],
+            'wip': True,
+            'approved': False,
+        }
+        self._assert_valid(data)
+
+    #NOTE(bcwaldon): we specifically test id since it is validated by a regex
+    def test_change_id(self):
         data = [
             {'id': '3ca4a568-3aa8-4998-82ef-30770bd680f2'},
         ]

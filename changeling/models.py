@@ -48,7 +48,6 @@ class Change(object):
                 val = self[k]
                 if val is not None:
                     yield (k, val)
-
         return dict(_generate_set_attributes())
 
     def __str__(self):
