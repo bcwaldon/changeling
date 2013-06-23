@@ -10,7 +10,12 @@ class Change(object):
     schema = {
         'name': 'change',
         'properties': {
-            'id': {'type': 'string'},
+            'id': {
+                'type': 'string',
+                'pattern': ('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}'
+                            '-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}'
+                            '-([0-9a-fA-F]){12}$'),
+            },
             'name': {'type': 'string'},
             'description': {'type': 'string'},
             'tags': {'type': 'array'},
