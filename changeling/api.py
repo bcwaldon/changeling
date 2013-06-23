@@ -2,8 +2,7 @@ import changeling.models
 
 
 class ChangeAPI(object):
-    def __init__(self, config, storage):
-        self.config = config
+    def __init__(self, storage):
         self.storage = storage
 
     def list(self):
