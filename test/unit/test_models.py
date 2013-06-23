@@ -11,20 +11,6 @@ class TestChangeModel(unittest.TestCase):
         change = changeling.models.Change(**data)
         self.assertTrue(uuid.UUID(change['id']))
 
-
-class TestChangeModelValidation(unittest.TestCase):
-    def _assert_valid(self, data):
-        # The lack of a raised exception signals a valid model
-        changeling.models.Change(**data)
-        changeling.models.Change.from_dict(data)
-
-    def _assert_invalid(self, data):
-        # Check that calling __init__ passes but returns an invalid model
-        self.assertRaises(changeling.exception.ValidationError,
-                          changeling.models.Change, **data)
-        self.assertRaises(changeling.exception.ValidationError,
-                          changeling.models.Change.from_dict, data)
-
     def test_full_model(self):
         data = {
             'id': '323096f8-d02a-427e-a25a-8f70df27d78b',
@@ -78,6 +64,20 @@ class TestChangeModelValidation(unittest.TestCase):
 
         self.assertTrue(result.pop('id') is not None)
         self.assertEqual(expected, result)
+
+
+class TestChangeModelValidation(unittest.TestCase):
+    def _assert_valid(self, data):
+        # The lack of a raised exception signals a valid model
+        changeling.models.Change(**data)
+        changeling.models.Change.from_dict(data)
+
+    def _assert_invalid(self, data):
+        # Check that calling __init__ passes but returns an invalid model
+        self.assertRaises(changeling.exception.ValidationError,
+                          changeling.models.Change, **data)
+        self.assertRaises(changeling.exception.ValidationError,
+                          changeling.models.Change.from_dict, data)
 
     #NOTE(bcwaldon): we specifically test id since it is validated by a regex
     def test_change_id(self):
