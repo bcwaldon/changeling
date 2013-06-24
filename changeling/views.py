@@ -29,7 +29,6 @@ def identify(auth_api_factory):
     return wrapper
 
 
-
 def build_response(status, data=None):
     resp = flask.Response(status=status)
     resp.mimetype = 'application/vnd.changeling.v0+json'

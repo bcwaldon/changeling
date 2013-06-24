@@ -47,7 +47,6 @@ class AuthenticatedChangeAPI(UnauthenticatedChangeAPI):
         return change
 
 
-
 def change_api_factory(storage, user=None):
     if user is None:
         return UnauthenticatedChangeAPI(storage)

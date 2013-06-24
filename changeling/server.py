@@ -15,7 +15,6 @@ parser.add_argument('--host', default=None)
 parser.add_argument('--port', default=None, type=int)
 
 
-
 def _get_app(config):
     storage = changeling.storage.StorageFactory(config)
     change_api_factory = changeling.api.change_api_factory

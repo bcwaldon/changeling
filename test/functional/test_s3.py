@@ -1,8 +1,9 @@
 import os
-
-import pytest
 import unittest
 import uuid
+
+import boto
+import pytest
 
 import changeling.config
 import changeling.storage
@@ -13,11 +14,24 @@ def find_config():
     return changeling.config.load(path)
 
 
+def delete_bucket(access, secret, bucket_name):
+    connection = boto.s3.connection.S3Connection(access, secret)
+    bucket = connection.get_bucket(bucket_name)
+    for key in bucket.get_all_keys():
+        key.delete()
+    bucket.delete()
+
+
 class Base(object):
     def setUp(self):
         self.config = find_config()
         bucket = 'changeling-testing-%s' % uuid.uuid4()
         self.config['s3.bucket'] = bucket
+
+    def tearDown(self):
+        delete_bucket(self.config['s3.access_key'],
+                      self.config['s3.secret_key'],
+                      self.config['s3.bucket'])
 
 
 class TestStorageFactory(Base, unittest.TestCase):
