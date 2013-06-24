@@ -15,28 +15,31 @@ parser.add_argument('--host', default=None)
 parser.add_argument('--port', default=None, type=int)
 
 
-def run_gunicorn(config_file):
-    app = flask.Flask('changeling')
 
-    config = changeling.config.load(config_file)
+def _get_app(config):
     storage = changeling.storage.StorageFactory(config)
-    api = changeling.api.ChangeAPI(storage)
+    change_api_factory = changeling.api.change_api_factory
+    auth_api_factory = changeling.api.auth_api_factory
 
-    changeling.views.register(app, api)
+    app = flask.Flask('changeling')
+    changeling.views.register(
+        app, storage, change_api_factory, auth_api_factory)
+
+    app.debug = config['logging.level'].lower() == 'debug'
 
     return app
 
 
+def build_app_from_config_file(config_file):
+    config = changeling.config.load(config_file)
+    return _get_app(config)
+
+
 def run():
     args = parser.parse_args()
-
     config = changeling.config.load(args.config_file)
-    storage = changeling.storage.StorageFactory(config)
-    api = changeling.api.ChangeAPI(storage)
+    config['logging.level'] = 'debug' if args.debug else 'info'
 
-    app = flask.Flask('changeling')
-    app.debug = args.debug
-
-    changeling.views.register(app, api)
+    app = _get_app(config)
     app.run(host=args.host or config['server.host'],
             port=args.port or config['server.port'])

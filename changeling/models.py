@@ -21,6 +21,7 @@ class Change(object):
             'tags': {'type': 'array'},
             'wip': {'type': 'boolean'},
             'approved': {'type': 'boolean'},
+            'owner': {'type': 'string'},
         },
         'additionalProperties': False,
     }

@@ -1,3 +1,4 @@
+import functools
 import json
 
 import flask
@@ -7,6 +8,26 @@ import jsonpointer
 
 import changeling.exception
 import changeling.models
+
+
+def get_api_key():
+    try:
+        return request.headers['x-changeling-api-key']
+    except KeyError:
+        return None
+
+
+def identify(auth_api_factory):
+    def wrapper(func):
+        @functools.wraps(func)
+        def _func(*args, **kwargs):
+            api_key = get_api_key()
+            api = auth_api_factory()
+            user = api.get_user_by_key(api_key)
+            return func(user, *args, **kwargs)
+        return _func
+    return wrapper
+
 
 
 def build_response(status, data=None):
@@ -39,19 +60,21 @@ def parse_json_request():
         raise ValueError('Unable to parse JSON: %s' % exc)
 
 
-def register(app, api):
-
+def register(app, storage, change_api_factory, auth_api_factory):
     @app.route('/schemas/change', methods=['GET'])
     def schema():
-        return build_response(200, api.schema())
+        change_api = change_api_factory(storage)
+        return build_response(200, change_api.schema())
 
     @app.route('/changes', methods=['GET'])
     def list_changes():
-        data = [change.to_dict() for change in api.list()]
+        change_api = change_api_factory(storage)
+        data = [change.to_dict() for change in change_api.list()]
         return build_response(200, data)
 
     @app.route('/changes', methods=['POST'])
-    def create_change():
+    @identify(auth_api_factory)
+    def create_change(user):
         try:
             data = parse_json_request()
         except ValueError as exc:
@@ -61,15 +84,17 @@ def register(app, api):
         if 'id' in data:
             data.pop('id')
 
+        change_api = change_api_factory(storage, user)
+
         try:
-            change = api.new(data)
+            change = change_api.new(data)
         except changeling.exception.ValidationError:
             return build_error_response(400, 'Invalid change entity')
         else:
             return build_response(201, change.to_dict())
 
     @app.route('/changes/<change_id>', methods=['PATCH'])
-    def patch_change(change_id):
+    def patch_change(user, change_id):
         try:
             data = parse_json_request()
         except ValueError as exc:
@@ -77,8 +102,10 @@ def register(app, api):
 
         patch = jsonpatch.JsonPatch(data)
 
+        change_api = change_api_factory(storage, user)
+
         try:
-            change = api.get(change_id)
+            change = change_api.get(change_id)
         except changeling.exception.ChangeNotFound:
             return build_response(404)
 
@@ -94,7 +121,7 @@ def register(app, api):
             return build_error_response(400, msg)
 
         try:
-            change = api.new(document)
+            change = change_api.new(document)
         except changeling.exception.ValidationError:
             msg = 'Application of JSON Patch results in an invalid entity'
             return build_error_response(400, msg)
@@ -103,8 +130,9 @@ def register(app, api):
 
     @app.route('/changes/<change_id>', methods=['GET'])
     def show_change(change_id):
+        change_api = change_api_factory(storage)
         try:
-            change = api.get(change_id)
+            change = change_api.get(change_id)
         except changeling.exception.ChangeNotFound:
             return build_response(404)
         else:
@@ -112,9 +140,10 @@ def register(app, api):
 
     @app.route('/changes/<change_id>', methods=['DELETE'])
     def delete_change(change_id):
+        change_api = change_api_factory(storage)
         try:
-            change = api.get(change_id)
-            api.delete(change)
+            change = change_api.get(change_id)
+            change_api.delete(change)
         except changeling.exception.ChangeNotFound:
             return build_response(404)
         else:
