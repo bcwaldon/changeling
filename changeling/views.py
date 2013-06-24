@@ -1,3 +1,4 @@
+import copy
 import functools
 import json
 
@@ -93,6 +94,7 @@ def register(app, storage, change_api_factory, auth_api_factory):
             return build_response(201, change.to_dict())
 
     @app.route('/changes/<change_id>', methods=['PATCH'])
+    @identify(auth_api_factory)
     def patch_change(user, change_id):
         try:
             data = parse_json_request()
@@ -125,6 +127,8 @@ def register(app, storage, change_api_factory, auth_api_factory):
             msg = 'Application of JSON Patch results in an invalid entity'
             return build_error_response(400, msg)
 
+        change_api.extend_history(change, data)
+
         return build_response(200, change.to_dict())
 
     @app.route('/changes/<change_id>', methods=['GET'])
@@ -147,3 +151,15 @@ def register(app, storage, change_api_factory, auth_api_factory):
             return build_response(404)
         else:
             return build_response(204)
+
+    @app.route('/changes/<change_id>/history', methods=['GET'])
+    def get_change_history(change_id):
+        change_api = change_api_factory(storage)
+        try:
+            change = change_api.get(change_id)
+        except changeling.exception.ChangeNotFound:
+            return build_response(404)
+
+        history = change_api.get_history(change)
+        dump = [item.to_dict() for item in history]
+        return build_response(200, dump)

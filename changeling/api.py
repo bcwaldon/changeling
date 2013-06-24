@@ -1,3 +1,5 @@
+import json
+
 import changeling.models
 
 
@@ -29,6 +31,15 @@ class UnauthenticatedChangeAPI(object):
 
     def delete(self, change):
         self.storage.delete_change(change['id'])
+
+    def extend_history(self, change, modification):
+        data = {'modification': json.dumps(modification)}
+        item = changeling.models.HistoryItem(**data)
+        self.storage.extend_change_history(change['id'], item.to_dict())
+
+    def get_history(self, change):
+        data = self.storage.get_change_history(change['id'])
+        return [changeling.models.HistoryItem.from_dict(d) for d in data]
 
     @staticmethod
     def schema():
