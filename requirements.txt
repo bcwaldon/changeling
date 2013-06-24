@@ -10,3 +10,4 @@ tox
 pep8==1.2
 pytest
 pytest-cov
+webob

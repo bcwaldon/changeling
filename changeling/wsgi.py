@@ -1,4 +1,3 @@
-import copy
 import functools
 import json
 
@@ -163,3 +162,9 @@ def register(app, storage, change_api_factory, auth_api_factory):
         history = change_api.get_history(change)
         dump = [item.to_dict() for item in history]
         return build_response(200, dump)
+
+
+def build_app(storage, change_api_factory, auth_api_factory):
+    app = flask.Flask('changeling')
+    register(app, storage, change_api_factory, auth_api_factory)
+    return app

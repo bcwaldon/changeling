@@ -1,11 +1,9 @@
 import argparse
 
-import flask
-
 import changeling.api
 import changeling.config
 import changeling.storage
-import changeling.views
+import changeling.wsgi
 
 
 parser = argparse.ArgumentParser()
@@ -20,9 +18,9 @@ def _get_app(config):
     change_api_factory = changeling.api.change_api_factory
     auth_api_factory = changeling.api.auth_api_factory
 
-    app = flask.Flask('changeling')
-    changeling.views.register(
-        app, storage, change_api_factory, auth_api_factory)
+    app = changeling.wsgi.build_app(storage,
+                                    change_api_factory,
+                                    auth_api_factory)
 
     app.debug = config['logging.level'].lower() == 'debug'
 
